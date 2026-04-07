@@ -84,13 +84,18 @@ if __name__ == "__main__":
     egfr_indices = get_mutation_indices(EGFR_mutations_list)
     kras_indices = get_mutation_indices(KRAS_mutations_list)
 
-    # 3. עדכון המילונים שהגדרת למעלה
+    # 3. עדכון המילונים שהוגדרו למעלה
     update_domain_counts(egfr_indices, EGFR_domains)
     update_domain_counts(kras_indices, KRAS_domains)
 
-    # הדפסת התוצאות לראות שזה עבד
-    print("EGFR Domain Counts:", EGFR_domains)
-    print("KRAS Domain Counts:", KRAS_domains)
+    # הדפסת התוצאות לקובץ
+    with open("results/results.txt", "w") as results_file:
+        results_file.write("EGFR Domain Counts:\n")
+        for domain, count in EGFR_domains.items():
+            results_file.write(f"  {domain}: {count}\n")
+        results_file.write("\nKRAS Domain Counts:\n")
+        for domain, count in KRAS_domains.items():
+            results_file.write(f"  {domain}: {count}\n")
 
     # סגירת קבצים
     EGFR_mutations.close()
