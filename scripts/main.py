@@ -35,7 +35,7 @@ def get_list_of_all_protein_changes(mutations_file):
             continue
         line = line.strip()
         line = line.split("\t")
-        if len(line) > 5:  # בדיקת בטיחות שהעמודה קיימת
+        if len(line) > 5:  # לוודא שהעמודה קיימת
             change = line[5]
             protein_changes.append(change)
     return protein_changes
