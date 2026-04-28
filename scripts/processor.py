@@ -2,8 +2,6 @@ import re
 import pandas as pd
 
 
-
-
 def get_protein_sequence(protein_file):
     """
     קלט: קובץ חלבון פתוח (פורמט FASTA).
@@ -68,3 +66,36 @@ def update_domain_counts(indices_list, domain_dict):
             # בודקים אם לפחות אחד מהאינדקסים של המוטציה נמצא בתוך הטווח
             if any(start <= idx <= end for idx in indices):
                 domain_dict[(start, end)] += 1
+
+
+def build_regression_dataframe(protein_name, seq_len, domains_dict, mutation_indices):
+    """
+    יוצר טבלה שבה כל שורה היא עמדה בחלבון (1 עד אורך החלבון).
+    """
+    # הופך רשימת רשימות [[12], [858]] לרשימה אחת שטוחה [12, 858]
+    flat_mutations = [idx for sublist in mutation_indices for idx in sublist]
+    
+    rows = []
+    for pos in range(1, seq_len + 1):
+        # האם העמדה בתוך דומיין כלשהו? (0 או 1)
+        is_in_domain = 0
+        for (start, end) in domains_dict.keys():
+            if start <= pos <= end:
+                is_in_domain = 1
+                break
+        
+        # האם יש מוטציה בעמדה הזו? (0 או 1)
+        has_mutation = 1 if pos in flat_mutations else 0
+        
+        # כמה מוטציות יש בעמדה הזו?
+        mut_count = flat_mutations.count(pos)
+        
+        rows.append({
+            'protein': protein_name,
+            'pos': pos,
+            'is_in_domain': is_in_domain,
+            'has_mutation': has_mutation,
+            'mutation_count': mut_count
+        })
+    
+    return pd.DataFrame(rows)
