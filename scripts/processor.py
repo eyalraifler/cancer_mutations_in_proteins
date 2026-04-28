@@ -1,30 +1,8 @@
 import re
-from config_data import KRAS_DOMAINS, EGFR_DOMAINS, DATA_PATHS
-from processor import ( get_protein_sequence, get_protein_sequence_length,
-get_list_of_all_protein_changes, get_mutation_indices, update_domain_counts)
+import pandas as pd
 
-# מילון עבור חלבון KRAS
-# המפתח: טווח חומצות אמינו (התחלה, סוף)
-# הערך: מספר המוטציות שנמצאו בטווח זה
-KRAS_domains = {
-    (1, 165): 0,
-    (10, 17): 0,
-    (30, 76): 0,
-    (166, 185): 0,
-    (185, 188): 0
-}
 
-# מילון עבור חלבון EGFR
-EGFR_domains = {
-    (1, 165): 0,
-    (166, 309): 0,
-    (310, 480): 0,
-    (481, 644): 0,
-    (645, 668): 0,
-    (669, 712): 0,
-    (713, 979): 0,
-    (980, 1210): 0
-}
+
 
 def get_protein_sequence(protein_file):
     """
@@ -90,38 +68,3 @@ def update_domain_counts(indices_list, domain_dict):
             # בודקים אם לפחות אחד מהאינדקסים של המוטציה נמצא בתוך הטווח
             if any(start <= idx <= end for idx in indices):
                 domain_dict[(start, end)] += 1
-
-
-if __name__ == "__main__":
-    # פתיחת קבצי הנתונים
-    EGFR_protein = open(DATA_PATHS["EGFR_FASTA"], "r")
-    Kras_protein = open(DATA_PATHS["KRAS_FASTA"], "r")
-    EGFR_mutations = open(DATA_PATHS["EGFR_MUTATIONS"], "r")
-    KRAS_mutations = open(DATA_PATHS["KRAS_MUTATIONS"], "r")
-    
-    # 1. חילוץ רשימת המוטציות
-    EGFR_mutations_list = get_list_of_all_protein_changes(EGFR_mutations)
-    KRAS_mutations_list = get_list_of_all_protein_changes(KRAS_mutations)
-
-    # 2. הפיכת המוטציות למספרים
-    egfr_indices = get_mutation_indices(EGFR_mutations_list)
-    kras_indices = get_mutation_indices(KRAS_mutations_list)
-
-    # 3. עדכון המילונים שהוגדרו למעלה
-    update_domain_counts(egfr_indices, EGFR_domains)
-    update_domain_counts(kras_indices, KRAS_domains)
-
-    # הדפסת התוצאות לקובץ
-    with open("results/results.txt", "w") as results_file:
-        results_file.write("EGFR Domain Counts:\n")
-        for domain, count in EGFR_domains.items():
-            results_file.write(f"  {domain}: {count}\n")
-        results_file.write("\nKRAS Domain Counts:\n")
-        for domain, count in KRAS_domains.items():
-            results_file.write(f"  {domain}: {count}\n")
-
-    # סגירת קבצים
-    EGFR_mutations.close()
-    KRAS_mutations.close()
-    EGFR_protein.close()
-    Kras_protein.close()
