@@ -23,6 +23,26 @@ EGFR_domains = {
     (980, 1210): 0
 }
 
+def get_protein_sequence(protein_file):
+    """
+    קלט: קובץ חלבון פתוח (פורמט FASTA).
+    פלט: רצף החלבון כמחרוזת.
+    """
+    sequence = ""
+    for line in protein_file:
+        if line.startswith('>'):
+            continue
+        sequence += line.strip()
+    return sequence
+
+def get_protein_sequence_length(protein_file):
+    """
+    קלט: קובץ חלבון פתוח (פורמט FASTA).
+    פלט: אורך רצף החלבון (מספר שלם).
+    """
+    sequence = get_protein_sequence(protein_file)
+    return len(sequence)
+
 
 def get_list_of_all_protein_changes(mutations_file):
     """
