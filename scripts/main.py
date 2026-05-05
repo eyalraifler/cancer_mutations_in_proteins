@@ -1,5 +1,6 @@
 import pandas as pd
 from config_data import KRAS_DOMAINS, EGFR_DOMAINS, DATA_PATHS
+from logistic_regression import run_logistic_regression
 from processor import (
     get_protein_sequence_length, 
     get_list_of_all_protein_changes, 
@@ -29,3 +30,5 @@ if __name__ == "__main__":
     final_df.to_csv("results/protein_mutation_data.csv", index=False)
     
     print("Success! Data table created.")
+    
+    run_logistic_regression()
