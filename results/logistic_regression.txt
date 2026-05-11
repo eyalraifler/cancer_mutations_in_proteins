@@ -1,0 +1,13 @@
+Intercept: -0.2491
+Coefficient (is_in_domain): 0.2753
+Odds Ratio: 1.3170
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.12      0.22       271
+           1       0.03      0.89      0.06         9
+
+    accuracy                           0.15       280
+   macro avg       0.50      0.51      0.14       280
+weighted avg       0.94      0.15      0.21       280

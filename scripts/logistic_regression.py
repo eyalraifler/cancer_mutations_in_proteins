@@ -31,3 +31,14 @@ def run_logistic_regression():
     import numpy as np
     odds_ratio = np.exp(coef)
     print(f"Odds Ratio: {odds_ratio:.4f}")
+
+    y_pred = model.predict(X_test)
+    report = classification_report(y_test, y_pred)
+    print(report)
+
+    with open('results/logistic_regression.txt', 'w') as f:
+        f.write(f"Intercept: {intercept:.4f}\n")
+        f.write(f"Coefficient (is_in_domain): {coef:.4f}\n")
+        f.write(f"Odds Ratio: {odds_ratio:.4f}\n\n")
+        f.write("Classification Report:\n")
+        f.write(report)
