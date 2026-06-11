@@ -5,8 +5,11 @@ KRAS_DOMAINS = {
     (185, 188): "CAAX motif"
 }
 
-EGFR_DOMAINS = {
-    (1, 24): "Signal Peptide",
+#for running the regression with different domain definitions, 
+# we can switch between these dictionaries in main.py
+
+#זווית 1
+EGFR_ALL_DOMAINS = {
     (25, 189): "Domain I (L1)",
     (190, 333): "Domain II (CR1)",
     (334, 504): "Domain III (L2)",
@@ -17,6 +20,29 @@ EGFR_DOMAINS = {
     (741, 750): "P-loop (Nucleotide Binding)",
     (850, 875): "Activation Loop (A-loop)",
     (974, 1210): "C-terminal Tail"
+}
+
+#זווית 2
+EGFR_DOMAINS_BY_THE_ARTICLE = {
+    (25, 189):    "Domain I (Ligand binding)",
+    (190, 333):   "Domain II (Dimerization interface)",
+    (334, 504):   "Domain III (Ligand binding)",
+    (505, 645): "Domain IV (CR2)",
+    (713, 973): "Tyrosine Kinase Domain",
+}
+
+#זווית 3
+EGFR_DOMAINS_BY_UNIPROT = {
+    (712, 979): "Kinase Domain",
+}
+
+#רק האזורים המשמעותיים בכל דומיין
+EGFR_DOMAINS_INPORTANT_ONES = {
+    (572, 574): "Extracellular Domain",
+    (279, 280): "Extracellular Domain",
+    (712, 724): "Kinase Domain",
+    (746, 753): "Kinase Domain",
+    (858, 858): "Kinase Domain"
 }
 
 # files paths
