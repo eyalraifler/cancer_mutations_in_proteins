@@ -99,3 +99,63 @@ def build_regression_dataframe(protein_name, seq_len, domains_dict, mutation_ind
         })
     
     return pd.DataFrame(rows)
+
+
+def create_domain_mutations_summary(df, protein_name, domains_dict):
+    """
+    Create a summary of mutation counts per domain for a given protein.
+    Returns a list of dictionaries with domain and mutation count information.
+    """
+    summary = []
+    
+    for (start, end), domain_name in domains_dict.items():
+        # Filter dataframe for this domain
+        domain_data = df[(df['pos'] >= start) & (df['pos'] <= end) & (df['protein'] == protein_name)]
+        
+        # Count mutations in this domain
+        mutation_count = domain_data['mutation_count'].sum()
+        
+        summary.append({
+            'protein': protein_name,
+            'domain': domain_name,
+            'range': f"{start}-{end}",
+            'mutations': int(mutation_count)
+        })
+    
+    return summary
+
+
+def save_domain_mutations_report(df_egfr, df_kras, egfr_domains, kras_domains):
+    """
+    Save a report of mutations per domain for each protein.
+    """
+    filename = "results/domain_mutations.txt"
+    
+    egfr_summary = create_domain_mutations_summary(df_egfr, "EGFR", egfr_domains)
+    kras_summary = create_domain_mutations_summary(df_kras, "KRAS", kras_domains)
+    
+    with open(filename, 'w') as f:
+        f.write("MUTATION COUNT BY DOMAIN\n")
+        f.write("=" * 60 + "\n\n")
+        
+        # EGFR summary
+        f.write("EGFR PROTEIN\n")
+        f.write("-" * 60 + "\n")
+        f.write(f"{'Domain Name':<35} {'Range':<15} {'Mutations':<10}\n")
+        f.write("-" * 60 + "\n")
+        for entry in egfr_summary:
+            f.write(f"{entry['domain']:<35} {entry['range']:<15} {entry['mutations']:<10}\n")
+        
+        f.write("\n" + "=" * 60 + "\n\n")
+        
+        # KRAS summary
+        f.write("KRAS PROTEIN\n")
+        f.write("-" * 60 + "\n")
+        f.write(f"{'Domain Name':<35} {'Range':<15} {'Mutations':<10}\n")
+        f.write("-" * 60 + "\n")
+        for entry in kras_summary:
+            f.write(f"{entry['domain']:<35} {entry['range']:<15} {entry['mutations']:<10}\n")
+        
+        f.write("\n" + "=" * 60 + "\n")
+    
+    print(f"Domain mutations report saved to: {filename}")

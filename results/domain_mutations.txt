@@ -1,0 +1,30 @@
+MUTATION COUNT BY DOMAIN
+============================================================
+
+EGFR PROTEIN
+------------------------------------------------------------
+Domain Name                         Range           Mutations 
+------------------------------------------------------------
+Domain I (L1)                       25-189          2         
+Domain II (CR1)                     190-333         3         
+Domain III (L2)                     334-504         4         
+Domain IV (CR2)                     505-645         2         
+Transmembrane (TM)                  646-668         0         
+Juxtamembrane (JM)                  669-712         6         
+Tyrosine Kinase Domain              713-973         87        
+P-loop (Nucleotide Binding)         741-750         38        
+Activation Loop (A-loop)            850-875         25        
+C-terminal Tail                     974-1210        2         
+
+============================================================
+
+KRAS PROTEIN
+------------------------------------------------------------
+Domain Name                         Range           Mutations 
+------------------------------------------------------------
+P-loop                              10-14           153       
+Switch I                            30-40           1         
+Switch II                           58-72           3         
+CAAX motif                          185-188         0         
+
+============================================================
