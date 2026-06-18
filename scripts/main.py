@@ -22,7 +22,7 @@ CHOSEN_EGFR_DOMAINS_DICTIONARY = EGFR_ALL_REGIONS_WITH_FUNCTION
 
 
 if __name__ == "__main__":
-    # עיבוד EGFR
+    # יצירת DataFrame עבור EGFR
     with open(DATA_PATHS["EGFR_FASTA"], "r") as f_seq, open(DATA_PATHS["EGFR_MUTATIONS"], "r") as f_mut:
         egfr_len = get_protein_sequence_length(f_seq)
         egfr_mut_list = get_list_of_all_protein_changes(f_mut)
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         
         df_egfr = build_regression_dataframe("EGFR", egfr_len, CHOSEN_EGFR_DOMAINS_DICTIONARY, egfr_indices)
 
-    # עיבוד KRAS
+    # יצירת DataFrame עבור KRAS
     with open(DATA_PATHS["KRAS_FASTA"], "r") as f_seq, open(DATA_PATHS["KRAS_MUTATIONS"], "r") as f_mut:
         kras_len = get_protein_sequence_length(f_seq)
         kras_mut_list = get_list_of_all_protein_changes(f_mut)
@@ -38,18 +38,21 @@ if __name__ == "__main__":
         
         df_kras = build_regression_dataframe("KRAS", kras_len, CHOSEN_KRAS_DOMAINS_DICTIONARY, kras_indices)
 
-    # save the table
+    # איחד הDtaFrames של EGFR ו-KRAS לDataFrame אחד
     final_df = pd.concat([df_egfr, df_kras])
+    #המרה לקובץ CSV
     final_df.to_csv("results/protein_mutation_data.csv", index=False)
     
     print("Success! Data table created.")
     
-    # Create and save domain mutations report
+    # יוצרת סיכום עבור כל חלבון של כמות המוטציות בכל דומיין עם טווחי הדומיין
+    #  וכמות העמדות וסכום המוטציות שלא נמצאים בדומיין כלשהוא 
     save_domain_mutations_report(df_egfr, df_kras, CHOSEN_EGFR_DOMAINS_DICTIONARY, CHOSEN_KRAS_DOMAINS_DICTIONARY)
     
-    # --- ADD THIS LINE TO WIPE THE OLD FILE ONCE AT STARTUP ---
+    # איפוס קובץ התוצאות של הרגרסיה הלוגיסטית  
     open('results/logistic_regression_results.txt', 'w').close()
     
+    # הרצת רגרסיה לוגיסטית על כל הנתונים המשולבים ובנוסף על כל חלבון בנפרד
     run_logistic_regression(final_df, analysis_name="Combined (EGFR & KRAS)")
     run_logistic_regression(df_egfr, analysis_name="EGFR Only")
     run_logistic_regression(df_kras, analysis_name="KRAS Only")

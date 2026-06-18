@@ -9,12 +9,12 @@ def run_logistic_regression(df, analysis_name="Combined"):
     print(f"\n" + "="*40)
     print(f"Running Logistic Regression for: {analysis_name}")
     print("="*40)
-
+ # המשתנה 'is_in_domain' היא המשתנה הבלתי תלוי (X), והמשתנה 'has_mutation' הוא המשתנה התלוי (y).
     X = df[['is_in_domain']]
     y = df['has_mutation']
-
+# חלוקת הנתונים לאימון ובדיקה (80% לאימון, 20% לבדיקה) תוך שמירה על פרופורציות המוטציות (stratify=y).
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-
+#אימון המודל 
     model = LogisticRegression(class_weight='balanced')
     model.fit(X_train, y_train)
 

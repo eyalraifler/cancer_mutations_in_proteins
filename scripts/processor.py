@@ -4,7 +4,7 @@ import pandas as pd
 
 def get_protein_sequence(protein_file):
     """
-    קלט: קובץ חלבון פתוח (פורמט FASTA).
+    קלט: קובץ החלבון  (פורמט FASTA).
     פלט: רצף החלבון כמחרוזת.
     """
     sequence = ""
@@ -16,7 +16,7 @@ def get_protein_sequence(protein_file):
 
 def get_protein_sequence_length(protein_file):
     """
-    קלט: קובץ חלבון פתוח (פורמט FASTA).
+    קלט: קובץ חלבון  (פורמט FASTA).
     פלט: אורך רצף החלבון (מספר שלם).
     """
     sequence = get_protein_sequence(protein_file)
@@ -25,7 +25,7 @@ def get_protein_sequence_length(protein_file):
 
 def get_list_of_all_protein_changes(mutations_file):
     """
-    קלט: קובץ מוטציות פתוח (פורמט TSV).
+    קלט: קובץ מוטציות  (פורמט TSV).
     פלט: רשימה של מחרוזות המייצגות את שינויי החלבון (למשל: 'L858R').
     """
     protein_changes = []
@@ -43,7 +43,7 @@ def get_list_of_all_protein_changes(mutations_file):
 def get_mutation_indices(mutation_list):
     """
     קלט: רשימת מחרוזות של מוטציות.
-    פלט: רשימה של רשימות, כאשר כל תת-רשימה מכילה את האינדקסים המספריים שנמצאו במוטציה.
+    פלט: רשימה של רשימות, כאשר כל תת-רשימה מכילה את המיקום של מוטציה.
     """
     all_indices = []
     for mut in mutation_list:
@@ -57,8 +57,8 @@ def get_mutation_indices(mutation_list):
 
 def update_domain_counts(indices_list, domain_dict):
     """
-    קלט: רשימת אינדקסים (פלט של get_mutation_indices) ומילון דומיינים לעדכון.
-    פלט: אין (מעדכן את המילון הקיים In-place).
+    קלט: רשימת אינדקסים של מוטציות, מילון של טווחי הדומיינים.
+    הפונקציה מעדכנת את המילון domain_dict עם מספר המוטציות בכל דומיין.
     """
     for indices in indices_list:
         # עוברים על כל טווח שקיים במילון (למשל (713, 979))
@@ -71,6 +71,12 @@ def update_domain_counts(indices_list, domain_dict):
 def build_regression_dataframe(protein_name, seq_len, domains_dict, mutation_indices):
     """
     יוצר טבלה שבה כל שורה היא עמדה בחלבון (1 עד אורך החלבון).
+    העמודות כוללות:
+    protein: שם החלבון (EGFR או KRAS)
+    pos: מיקום העמדה
+    is_in_domain: האם העמדה בתוך דומיין (0 או 1)
+    has_mutation: האם יש מוטציה בעמדה (0 או 1)
+    mutation_count: כמה מוטציות יש בעמדה
     """
     # הופך רשימת רשימות [[12], [858]] לרשימה אחת שטוחה [12, 858]
     flat_mutations = [idx for sublist in mutation_indices for idx in sublist]
@@ -103,7 +109,8 @@ def build_regression_dataframe(protein_name, seq_len, domains_dict, mutation_ind
 
 def count_positions_outside_domains(df, protein_name):
     """
-    Count how many amino acid positions are outside all defined domains.
+    קלט: DataFrame עם כל העמדות, שם החלבון.
+    פלט: מספר העמדות שלא נמצאות בתוך אף דומיין.
     """
     outside = df[(df['protein'] == protein_name) & (df['is_in_domain'] == 0)]
     return len(outside)
@@ -111,7 +118,8 @@ def count_positions_outside_domains(df, protein_name):
 
 def count_mutations_outside_domains(df, protein_name):
     """
-    Count how many mutations occur outside all defined domains.
+    קלט: DataFrame עם כל העמדות, שם החלבון.
+    פלט: סכום המוטציות שנמצאות בעמדות שלא בתוך אף דומיין.
     """
     outside = df[(df['protein'] == protein_name) & (df['is_in_domain'] == 0)]
     return int(outside['mutation_count'].sum())
@@ -119,8 +127,8 @@ def count_mutations_outside_domains(df, protein_name):
 
 def create_domain_mutations_summary(df, protein_name, domains_dict):
     """
-    Create a summary of mutation counts per domain for a given protein.
-    Returns a list of dictionaries with domain and mutation count information.
+    קלט: DataFrame ,מילון של כל הדומיינים והטווחי מיקומים שלהם, שם החלבון.
+    פלט: רשימה של מילונים, כאשר כל מילון מכיל את שם החלבון, שם הדומיין, טווחו ומספר המוטציות בו.
     """
     summary = []
     
@@ -143,7 +151,9 @@ def create_domain_mutations_summary(df, protein_name, domains_dict):
 
 def save_domain_mutations_report(df_egfr, df_kras, egfr_domains, kras_domains):
     """
-    Save a report of mutations per domain for each protein.
+    קלט:DataFrames ומילונים של הדומיינים עבור EGFR ו-KRAS.
+    הפונקציה יוצרת סיכום עבור כל חלבון של כמות המוטציות בכל דומיין עם טווחי הדומיין
+    וכמות העמדות וסכום המוטציות שלא נמצאים בדומיין כלשהוא 
     """
     filename = "results/domain_mutations.txt"
     
