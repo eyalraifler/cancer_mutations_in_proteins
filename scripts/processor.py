@@ -101,6 +101,22 @@ def build_regression_dataframe(protein_name, seq_len, domains_dict, mutation_ind
     return pd.DataFrame(rows)
 
 
+def count_positions_outside_domains(df, protein_name):
+    """
+    Count how many amino acid positions are outside all defined domains.
+    """
+    outside = df[(df['protein'] == protein_name) & (df['is_in_domain'] == 0)]
+    return len(outside)
+
+
+def count_mutations_outside_domains(df, protein_name):
+    """
+    Count how many mutations occur outside all defined domains.
+    """
+    outside = df[(df['protein'] == protein_name) & (df['is_in_domain'] == 0)]
+    return int(outside['mutation_count'].sum())
+
+
 def create_domain_mutations_summary(df, protein_name, domains_dict):
     """
     Create a summary of mutation counts per domain for a given protein.
@@ -145,6 +161,12 @@ def save_domain_mutations_report(df_egfr, df_kras, egfr_domains, kras_domains):
         f.write("-" * 60 + "\n")
         for entry in egfr_summary:
             f.write(f"{entry['domain']:<35} {entry['range']:<15} {entry['mutations']:<10}\n")
+
+        egfr_outside_aa = count_positions_outside_domains(df_egfr, "EGFR")
+        egfr_outside_mutations = count_mutations_outside_domains(df_egfr, "EGFR")
+        f.write("\n")
+        f.write(f"amount_of_amino_acids_not_in_domain = {egfr_outside_aa}\n")
+        f.write(f"mutations_not_in_domain = {egfr_outside_mutations}\n")
         
         f.write("\n" + "=" * 60 + "\n\n")
         
@@ -155,6 +177,12 @@ def save_domain_mutations_report(df_egfr, df_kras, egfr_domains, kras_domains):
         f.write("-" * 60 + "\n")
         for entry in kras_summary:
             f.write(f"{entry['domain']:<35} {entry['range']:<15} {entry['mutations']:<10}\n")
+
+        kras_outside_aa = count_positions_outside_domains(df_kras, "KRAS")
+        kras_outside_mutations = count_mutations_outside_domains(df_kras, "KRAS")
+        f.write("\n")
+        f.write(f"amount_of_amino_acids_not_in_domain = {kras_outside_aa}\n")
+        f.write(f"mutations_not_in_domain = {kras_outside_mutations}\n")
         
         f.write("\n" + "=" * 60 + "\n")
     

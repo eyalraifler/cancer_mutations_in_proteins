@@ -47,7 +47,10 @@ if __name__ == "__main__":
     # Create and save domain mutations report
     save_domain_mutations_report(df_egfr, df_kras, CHOSEN_EGFR_DOMAINS_DICTIONARY, CHOSEN_KRAS_DOMAINS_DICTIONARY)
     
-    run_logistic_regression()
+    # --- ADD THIS LINE TO WIPE THE OLD FILE ONCE AT STARTUP ---
+    open('results/logistic_regression_results.txt', 'w').close()
     
-    
+    run_logistic_regression(final_df, analysis_name="Combined (EGFR & KRAS)")
+    run_logistic_regression(df_egfr, analysis_name="EGFR Only")
+    run_logistic_regression(df_kras, analysis_name="KRAS Only")
     

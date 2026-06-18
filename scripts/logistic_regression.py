@@ -5,8 +5,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 
-def run_logistic_regression():
-    df = pd.read_csv('results/protein_mutation_data.csv')
+def run_logistic_regression(df, analysis_name="Combined"):
+    print(f"\n" + "="*40)
+    print(f"Running Logistic Regression for: {analysis_name}")
+    print("="*40)
 
     X = df[['is_in_domain']]
     y = df['has_mutation']
@@ -34,12 +36,14 @@ def run_logistic_regression():
     report = classification_report(y_test, y_pred)
     print(report)
 
-    with open('results/logistic_regression.txt', 'w') as f:
+    with open('results/logistic_regression_results.txt', 'a') as f:
+        f.write(f"========================================\n")
+        f.write(f"Analysis: {analysis_name}\n")
+        f.write(f"========================================\n")
         f.write(f"Intercept: {intercept:.4f}\n")
         f.write(f"Coefficient (is_in_domain): {coef:.4f}\n")
         f.write(f"Odds Ratio: {odds_ratio:.4f}\n")
         f.write(f"P-value (is_in_domain): {p_value:.4e}\n\n")
         f.write("Classification Report:\n")
         f.write(report)
-        
-   
+        f.write("\n\n")

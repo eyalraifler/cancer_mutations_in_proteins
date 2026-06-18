@@ -33,8 +33,8 @@ EGFR_ALL_REGIONS_WITH_FUNCTION = {
     (646, 668): "Transmembrane (TM)",
     (669, 712): "Juxtamembrane (JM)",
     (713, 973): "Tyrosine Kinase Domain",
-    (741, 750): "P-loop (Nucleotide Binding)",
-    (850, 875): "Activation Loop (A-loop)",
+    #(741, 750): "P-loop (Nucleotide Binding)",
+    #(850, 875): "Activation Loop (A-loop)",
     (974, 1210): "C-terminal Tail"
 }
 
