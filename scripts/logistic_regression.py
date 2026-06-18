@@ -4,25 +4,29 @@ import statsmodels.api as sm
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
+"""
+קלט:DataFrame של כל הנתונים המשולבים של EGFR ו-KRAS או כל חלבון בנפרד.
+פלט: קובץ טקסט עם תוצאות הרגרסיה הלוגיסטית.
 
+"""
 def run_logistic_regression(df, analysis_name="Combined"):
     print(f"\n" + "="*40)
     print(f"Running Logistic Regression for: {analysis_name}")
     print("="*40)
- # המשתנה 'is_in_domain' היא המשתנה הבלתי תלוי (X), והמשתנה 'has_mutation' הוא המשתנה התלוי (y).
+ # המשתנה 'is_in_domain' הוא המשתנה הבלתי תלוי (X) והמשתנה 'has_mutation' הוא המשתנה התלוי (y).
     X = df[['is_in_domain']]
     y = df['has_mutation']
 # חלוקת הנתונים לאימון ובדיקה (80% לאימון, 20% לבדיקה) תוך שמירה על פרופורציות המוטציות (stratify=y).
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
 #אימון המודל 
     model = LogisticRegression(class_weight='balanced')
     model.fit(X_train, y_train)
 
+# חילוץ פרמטרי המודל (Log-odds, Odds Ratio) ובדיקת מובהקות סטטיסטית (p-value)   
     intercept = model.intercept_[0]
     coef = model.coef_[0][0]
     odds_ratio = np.exp(coef)
-
-    # p-value via statsmodels Logit (MLE, no regularization)
     X_sm = sm.add_constant(X)
     sm_result = sm.Logit(y, X_sm).fit(disp=0)
     p_value = sm_result.pvalues['is_in_domain']
@@ -31,11 +35,11 @@ def run_logistic_regression(df, analysis_name="Combined"):
     print(f"Coefficient (is_in_domain): {coef:.4f}")
     print(f"Odds Ratio: {odds_ratio:.4f}")
     print(f"P-value (is_in_domain): {p_value:.4e}")
-
+# יצירת Classification Report
     y_pred = model.predict(X_test)
     report = classification_report(y_test, y_pred)
     print(report)
-
+# שמירת התוצאות לקובץ טקסט
     with open('results/logistic_regression_results.txt', 'a') as f:
         f.write(f"========================================\n")
         f.write(f"Analysis: {analysis_name}\n")
