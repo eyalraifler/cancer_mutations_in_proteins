@@ -47,3 +47,4 @@ def run_logistic_regression(df, analysis_name="Combined"):
         f.write("Classification Report:\n")
         f.write(report)
         f.write("\n\n")
+        
